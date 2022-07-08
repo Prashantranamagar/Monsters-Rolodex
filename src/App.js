@@ -1,38 +1,72 @@
 import { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
+import CardList from './components/card-list/card-list.component';
+import SearchBox from './components/search-box/search-box.component';
 import './App.css';
 
 class App extends Component{
   constructor(){
     super();
     this.state = {
-      name: 'Person',
+      monsters:[],
+      searchField:''   //stores the input we give in searchField
     };
   }
+
+    componentDidMount() {
+      fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response) => response.json())
+      .then((users) =>
+      this.setState(
+        () => {
+          return {
+            monsters: users
+          }
+        }
+      ))
+    }
+
+    onSearchChange = (event) => {
+      console.log(event);
+      const searchField = event.target.value.toLocaleLowerCase() //gets the input given in searchField by lowercasing
+      this.setState(() => {
+        return { searchField };  
+      });   // update the state
+
+    }
+
+
   render()  {
+
+    const {monsters, searchField} = this.state;
+    const { onSearchChange } = this;
+
+    const filteredMonsters = monsters.filter((monster) =>{
+      return monster.name.toLocaleLowerCase().includes(searchField);
+    });    //filters monsters according to the input in searchfield
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <p>HI {this.state.name}</p>
-            <button 
-            onClick={() => {
-              this.setState({ name: 'Rana'});
-            }}
-            >
-              Change Name
-            </button>
-          </a>
-        </header>
+
+        <h1 classname="app-title">Monsters Rolodex</h1>
+        <SearchBox 
+          onChangeHandller={onSearchChange} 
+          placeholder='search monsters' 
+          className='monsters-search-box'
+        ></SearchBox>
+          
+
+        {/* display monsters */}
+      {/* {filteredMonsters.map((monster) => {
+          return <div key={monster.id}>
+            <h1> {monster.name}</h1>         
+          </div>
+
+        })}
+             */}
+        <CardList 
+          monsters={filteredMonsters}
+        ></CardList>
       </div>
     );
   }
