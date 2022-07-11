@@ -1,5 +1,5 @@
+// import { Component } from 'react'
 import { useState, useEffect } from 'react';
-// import logo from './logo.svg';
 import CardList from './components/card-list/card-list.component';
 import SearchBox from './components/search-box/search-box.component';
 import './App.css';
@@ -8,8 +8,11 @@ const App = () =>{
 
   const[searchField, setSearchField] = useState(''); //[value, setValue]
   const[monsters, setMonsters] = useState([]);
+  const[filteredMonsters, setFilteredMonsters] = useState(monsters)
+  //const[stringField, setStringField] =useState('')  //for second search field
 
 
+  // fetching data only once
   useEffect( () => {
     fetch('https://jsonplaceholder.typicode.com/users')
       .then((response) => response.json())
@@ -17,6 +20,18 @@ const App = () =>{
       );
   }, [])   //fetch the data only once 
 
+
+  //used for multiple and single search field / 
+  useEffect(() => {
+    
+    const newfilteredMonsters = monsters.filter((monster) =>{
+      return monster.name.toLocaleLowerCase().includes(searchField);
+    });    //filters monsters according to the input in searchfield
+
+    setFilteredMonsters(newfilteredMonsters);
+    console.log('use effect is fireing')
+  }, [monsters, searchField])
+  
   
   const onSearchChange = (event) => {
     // console.log(event);
@@ -24,12 +39,13 @@ const App = () =>{
       setSearchField(searchFieldString)   
      };
 
+     // for second search
+  // const onStringChange = (event) =>{
+  //   setStringField(event.target.value)
+  // }
 
-     const filteredMonsters = monsters.filter((monster) =>{
-            return monster.name.toLocaleLowerCase().includes(searchField);
-          });    //filters monsters according to the input in searchfield
-      
 
+  
 
   return(
     <div className='App'>
@@ -40,15 +56,18 @@ const App = () =>{
           className='monsters-search-box'
         ></SearchBox>
 
+      {/* for second search */}
+      {/* <SearchBox 
+          onChangeHandler={onStringChange} 
+          placeholder='set string' 
+        ></SearchBox> */}
+
 
         <CardList monsters={filteredMonsters}></CardList>
 
     </div>
   )
 }
-
-
-
 
 
 

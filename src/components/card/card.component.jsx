@@ -1,13 +1,20 @@
-import { Component } from "react";
+// import { Component } from "react";
 
 
-class Card extends Component{
-    render(){
-        // const {monsters} = this.props.monster
-        return(
-            <h1>Hello</h1>
-        );
-    }
+const Card = (props) => {     // for futher destructuring const card =({monster: {id, name, email}}) =>
+    const {name, id, email} = props.monster  //destructuring 
+    // const {monsters} = this.props.monster  //for class component
+    return(
+        <div className="card-container" key ={id}>
+            <img
+                alt={`monster ${name}`}
+                src = {`https://robohash.org/${id}?set=set2`}
+            >
+            </img>
+            <h2>{name}</h2>
+            <p>{email}</p>
+        </div>
+    );
 }
 
 
